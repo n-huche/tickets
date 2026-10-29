@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Monitor de passagens REC <-> RIO. Uso: ./tickets ajuda
+DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+cd "$DIR" || exit 1
+[[ "$1" == "ajuda" || "$1" == "help" ]] && set -- --help
+exec "$DIR/.venv/bin/python" -m tickets_app.cli "$@"
