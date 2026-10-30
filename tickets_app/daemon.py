@@ -1,10 +1,9 @@
-"""Loop contínuo: varredura a cada ~30 min (com jitter) + heartbeat a cada 15 s."""
+"""Loop contínuo: varreduras em horários fixos (a cada SWEEP_INTERVAL_MIN, alinhados a SWEEP_ANCHOR) + heartbeat a cada 15 s."""
 from __future__ import annotations
 
 import json
 import logging
 import os
-import random
 import signal
 import threading
 import time
@@ -24,6 +23,27 @@ def _heartbeat_loop(prog: Progress, stop: threading.Event):
         tmp.write_text(json.dumps(snap, ensure_ascii=False, indent=1, default=str))
         os.replace(tmp, C.HEARTBEAT_PATH)
         stop.wait(15)
+
+
+def next_slot(after: datetime) -> datetime:
+    """Próximo slot fixo estritamente depois de `after` (slots alinhados a SWEEP_ANCHOR a cada SWEEP_INTERVAL_MIN)."""
+    after = after.astimezone()
+    hh, mm = (int(x) for x in C.SWEEP_ANCHOR.split(":"))
+    anchor = after.replace(hour=hh, minute=mm, second=0, microsecond=0)
+    step = C.SWEEP_INTERVAL_MIN * 60
+    n = (after - anchor).total_seconds() // step + 1
+    return anchor + timedelta(seconds=n * step)
+
+
+def _last_finished_epoch() -> float | None:
+    with db.tx() as con:
+        row = con.execute("SELECT MAX(finished_at) FROM sweeps WHERE finished_at IS NOT NULL AND status != 'interrupted'").fetchone()
+    if not row or not row[0]:
+        return None
+    try:
+        return datetime.fromisoformat(row[0]).timestamp()
+    except ValueError:
+        return None
 
 
 def _wait_until(deadline_epoch: float, stop: threading.Event, step: float = 30.0) -> bool:
@@ -72,6 +92,13 @@ def main() -> None:
     hb = threading.Thread(target=_heartbeat_loop, args=(prog, stop), daemon=True, name="heartbeat")
     hb.start()
     ev(lg, logging.INFO, "daemon iniciado", pid=os.getpid(), intervalo_min=C.SWEEP_INTERVAL_MIN)
+    # na partida: se a última varredura terminou há menos de um intervalo, espera o próximo slot
+    last = _last_finished_epoch()
+    if last is not None and time.time() - last < C.SWEEP_INTERVAL_MIN * 60:
+        nxt = next_slot(datetime.now())
+        prog.set(state="sleeping", next_sweep_at=nxt.isoformat(timespec="seconds"))
+        ev(lg, logging.INFO, "aguardando primeiro slot", proxima=nxt.isoformat(timespec="seconds"))
+        _wait_until(nxt.timestamp(), stop)
     while not stop.is_set():
         try:
             run_sweep(lg, stop, prog)
@@ -80,10 +107,9 @@ def main() -> None:
             prog.set(state="idle", last_error_at=db.now_iso())
         if stop.is_set():
             break
-        wait_min = max(5.0, C.SWEEP_INTERVAL_MIN + random.uniform(-C.SWEEP_JITTER_MIN, C.SWEEP_JITTER_MIN))
-        nxt = datetime.now().astimezone() + timedelta(minutes=wait_min)
+        nxt = next_slot(datetime.now())  # slot seguinte ao fim; sem fila de atrasados
         prog.set(state="sleeping", next_sweep_at=nxt.isoformat(timespec="seconds"))
-        ev(lg, logging.INFO, "aguardando próxima varredura", minutos=round(wait_min, 1), proxima=nxt.isoformat(timespec="seconds"))
+        ev(lg, logging.INFO, "aguardando próxima varredura", minutos=round((nxt.timestamp() - time.time()) / 60, 1), proxima=nxt.isoformat(timespec="seconds"))
         _wait_until(nxt.timestamp(), stop)
     prog.set(state="stopped")
     stop_snap = prog.snapshot()

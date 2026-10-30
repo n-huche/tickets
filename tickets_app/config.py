@@ -37,8 +37,8 @@ NONSTOP_ONLY = True
 PRICE_TARGET_BRL = 1100.0           # alerta quando ida + volta <= este valor
 
 # ---- Varredura --------------------------------------------------------------
-SWEEP_INTERVAL_MIN = 30             # intervalo médio entre varreduras (minutos)
-SWEEP_JITTER_MIN = 8                # +/- jitter aleatório (minutos)
+SWEEP_INTERVAL_MIN = 20             # varreduras começam em horários fixos a cada N min
+SWEEP_ANCHOR = "08:00"              # horário-âncora (hora local) dos slots: 08:00, 08:20, 08:40...
 QUERY_DELAY_S = (2.5, 6.0)          # pausa aleatória entre consultas à mesma fonte
 FARE_MAX_AGE_H = 6                  # tarifa mais velha que isso não entra nas combinações
 BLOCK_COOLDOWN_MIN = (30, 120)      # backoff (min) após bloqueio; dobra a cada bloqueio seguido

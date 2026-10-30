@@ -74,7 +74,7 @@ Em voos nacionais, **todas** as tarifas básicas das três cias incluem bagagem 
 | Submarino Viagens, Hurb | ❌ inviável | a conexão TLS é recusada a partir da box |
 | Zarpo | ❌ inviável | só vende hotéis e resorts |
 
-- As fontes de navegador são lentas (10–40 s por consulta). Por isso fazem **rodízio**: em cada varredura, só as ~14 datas consultadas há mais tempo. As 44 datas são cobertas a cada ~3 varreduras (~1,5 h).
+- As fontes de navegador são lentas (10–40 s por consulta). Por isso fazem **rodízio**: em cada varredura, só as ~14 datas consultadas há mais tempo. As 44 datas são cobertas a cada ~3 varreduras (~1 h).
 - Uma fonte que falha fica isolada, sem derrubar as outras. Em caso de bloqueio (403/429/captcha), ela entra em **backoff** de 30–120 min, que dobra a cada bloqueio seguido, até no máximo 12 h.
 - Cada observação guarda `source` (onde foi vista), `seller` (quem vende, ex.: "Decolar (via Kayak)") e `seller_kind` (`cia`, `ota`, `metabusca` ou `revenda_milhas`).
 - Os **feeds** são só sinal: aparecem em `./tickets promos` e no dashboard e não entram nas combinações.
@@ -101,7 +101,7 @@ O `.env` é relido a cada alerta, então **não é preciso reiniciar** o serviç
 
 - `./tickets service start` sobe `bin/supervisor.sh` em segundo plano (nohup + flock, então só roda uma instância).
 - O supervisor reinicia o daemon se ele cair ou se o heartbeat (`data/heartbeat.json`) ficar parado por mais de 5 min. Os reinícios têm backoff.
-- O daemon faz uma varredura a cada **30 ± 8 min**.
+- O daemon começa uma varredura em horários fixos a cada **20 min** (:00, :20, :40, alinhados a 08:00; `SWEEP_INTERVAL_MIN` e `SWEEP_ANCHOR` em `config.py`). O próximo horário é o primeiro slot depois do fim da varredura; slots perdidos não acumulam.
 - **A box não tem systemd nem cron**, então depois de um reboot rode `/workspace/tickets/tickets service start`. O `service ensure` é idempotente e pode ser chamado de qualquer script de inicialização.
 
 ## Arquivos

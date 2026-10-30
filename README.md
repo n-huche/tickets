@@ -1,6 +1,6 @@
 # Tickets
 
-A flight price monitor for a Recife (REC) to Rio de Janeiro (GIG/SDU) round trip with flexible dates inside fixed windows. It sweeps prices every ~30 minutes and fires a webhook when a round trip meets every rule.
+A flight price monitor for a Recife (REC) to Rio de Janeiro (GIG/SDU) round trip with flexible dates inside fixed windows. It sweeps prices every 20 minutes on a fixed schedule (:00, :20, :40) and fires a webhook when a round trip meets every rule.
 
 ## Why / how it was built
 
