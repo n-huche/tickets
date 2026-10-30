@@ -39,7 +39,7 @@ Também há `/health`, que devolve JSON com o estado, a idade do heartbeat e o p
 | Voo | só **direto** (sem escala nem conexão) |
 | Horário | decolar **≥ 04:00** e pousar **≤ 23:00** no mesmo dia, nos dois trechos |
 | Datas (2027) | ida e volta na **mesma janela**: 01–15/jan, 24/jan–05/fev ou 11–28/fev |
-| Estadia | 8 a 15 dias |
+| Estadia | 11 a 15 dias |
 | Alerta | total ≤ **R$ 1.100**; datas passadas são ignoradas |
 
 Cada varredura consulta **datas de ida e de volta separadas** (22 + 22 datas). As 95 combinações válidas são calculadas localmente, e só entram tarifas vistas nas últimas 6 h.

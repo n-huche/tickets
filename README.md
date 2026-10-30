@@ -15,7 +15,7 @@ A flight price monitor for a Recife (REC) to Rio de Janeiro (GIG/SDU) round trip
 - REC to GIG/SDU and back, nonstop only
 - Depart at or after 04:00, land at or before 23:00
 - 2027 windows: Jan 1–15, Jan 24–Feb 5, Feb 11–28; the whole stay inside one window
-- Stay of 8 to 15 nights
+- Stay of 11 to 15 nights
 - Alert when the round trip total is at or below R$ 1,100
 
 Sources: Google Flights, Kayak, Momondo, Kiwi, 123milhas and MaxMilhas, plus promo feeds as reference only.

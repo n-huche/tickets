@@ -28,7 +28,7 @@ WINDOWS: list[tuple[date, date]] = [
     (date(2027, 1, 24), date(2027, 2, 5)),
     (date(2027, 2, 11), date(2027, 2, 28)),
 ]
-MIN_STAY_DAYS = 8                   # volta - ida >= 8
+MIN_STAY_DAYS = 11                  # volta - ida >= 11
 MAX_STAY_DAYS = 15                  # volta - ida <= 15
 EARLIEST_DEPARTURE = (4, 0)         # não decolar antes de 04:00 (hora local)
 LATEST_ARRIVAL = (23, 0)            # não pousar depois de 23:00 (mesmo dia)
