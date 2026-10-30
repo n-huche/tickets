@@ -26,6 +26,21 @@ def _heartbeat_loop(prog: Progress, stop: threading.Event):
         stop.wait(15)
 
 
+def _wait_until(deadline_epoch: float, stop: threading.Event, step: float = 30.0) -> bool:
+    """Espera até o horário de parede `deadline_epoch` (time.time()).
+
+    Usa esperas curtas em vez de um único stop.wait() longo: o relógio monotônico
+    não avança enquanto a VM está pausada, então uma espera longa pode nunca vencer.
+    Retorna True se o stop foi acionado.
+    """
+    while not stop.is_set():
+        remaining = deadline_epoch - time.time()
+        if remaining <= 0:
+            return False
+        stop.wait(min(step, remaining))
+    return True
+
+
 def main() -> None:
     lg = get()
     db.init()
@@ -69,7 +84,7 @@ def main() -> None:
         nxt = datetime.now().astimezone() + timedelta(minutes=wait_min)
         prog.set(state="sleeping", next_sweep_at=nxt.isoformat(timespec="seconds"))
         ev(lg, logging.INFO, "aguardando próxima varredura", minutos=round(wait_min, 1), proxima=nxt.isoformat(timespec="seconds"))
-        stop.wait(wait_min * 60)
+        _wait_until(nxt.timestamp(), stop)
     prog.set(state="stopped")
     stop_snap = prog.snapshot()
     stop_snap.update(pid=os.getpid(), heartbeat_at=db.now_iso(), heartbeat_epoch=0)
