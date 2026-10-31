@@ -9,7 +9,6 @@ def _stub(name_, label_, kind, why):
 
 
 UNAVAILABLE = [
-    _stub("skyscanner", "Skyscanner", "metabusca", "Bloqueado: captcha PerimeterX ('are you a person or a robot') já na 1ª busca headless."),
     _stub("azul", "Azul (site/promo)", "cia", "Bloqueado: HTTP 403 Akamai no site e na página de promoções. Tarifas Azul chegam via Google/Kayak/123milhas/MaxMilhas."),
     _stub("gol", "GOL (site/promo)", "cia", "Bloqueado: Akamai; a busca não carrega em headless. Tarifas GOL chegam via Google/Kayak/123milhas/MaxMilhas."),
     _stub("latam", "LATAM (site/promo)", "cia", "Bloqueado: reCAPTCHA Enterprise / 'a busca está demorando mais que o normal'. Tarifas LATAM chegam via Google/Kayak/123milhas/MaxMilhas."),

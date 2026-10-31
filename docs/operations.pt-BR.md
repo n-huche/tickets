@@ -64,10 +64,10 @@ Em voos nacionais, **todas** as tarifas básicas das três cias incluem bagagem 
 | 123milhas | ✅ funciona | Chrome headless (API interna) — **revenda de milhas** |
 | MaxMilhas | ✅ funciona | Chrome headless (API interna) — **revenda de milhas** quando a tarifa é "miles" |
 | Kiwi.com | ✅ funciona | Chrome headless (GraphQL), em BRL |
+| Skyscanner | ✅ funciona | Chrome **com janela** num Xvfb próprio + perfil persistente (`data/skyscanner-profile`); quando o PerimeterX mostra "Pressione e segure", o adaptador segura o botão com o mouse e segue. Até 10 consultas por varredura (rodízio). Mostra Trip.com, 123milhas, Vai de Promo, Azul etc. como vendedores |
 | Melhores Destinos | ✅ sinal | RSS filtrado por Recife/Rio |
 | Passagens Imperdíveis | ✅ sinal | cards da página inicial filtrados por Recife/Rio |
 | Voopter | ✅ sinal | página de promoções saindo de Recife (a busca do site é uma SPA sem URL estável) |
-| Skyscanner | ❌ bloqueado | captcha PerimeterX |
 | Azul / GOL / LATAM (sites e páginas de promoção) | ❌ bloqueado | Akamai / reCAPTCHA. As tarifas dessas cias chegam pelas outras fontes |
 | Decolar | ❌ bloqueado (direto) | 403 + Cloudflare; o preço aparece como vendedor no Kayak/Momondo |
 | ViajaNet | ❌ bloqueado (direto) | 403 DataDome; o preço aparece como vendedor no Kayak/Momondo |
